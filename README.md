@@ -1,5 +1,5 @@
 # RaidBillBoard
-Billboard to show active raids sorted by which raids will end first
+Billboard to show active raids sorted by which raids will end first or show gym control in a geofence sorted by team control.
 
 # Install
 ```

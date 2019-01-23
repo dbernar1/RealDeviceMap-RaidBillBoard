@@ -3,8 +3,10 @@ Billboard to show active raids sorted by which raids will end first or show gym 
 
 # Install
 ```
-git clone https://github.com/Zyahko/RealDeviceMap-RaidBillBoard
-cp raid.php to your directory root for your site (i.e. /var/www/site/)
+git clone https://github.com/darthbutcher/RealDeviceMap-RaidBillBoard.git
+cp gym-control.php to your directory root for gym control billboard or 
+cp raid.pho to your directory root for raid billboard 
+(i.e. /var/www/site/)
 ```
 # raid.php
 Configure the database variables to match what is needed to access your RealDeviceMap Database

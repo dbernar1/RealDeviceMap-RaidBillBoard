@@ -10,12 +10,13 @@ cp raid.php to your directory root for your site (i.e. /var/www/site/)
 Configure the database variables to match what is needed to access your RealDeviceMap Database
 You can alter the column names by changing what is between the <th></th> tags
 
-# create_pokedex.sql
-Run this sql statement on your RealDeviceMap database to create the table that the billboard will use to match the raid_pokemon_id to pokemon_id to pull the pokemon's name instead of showing the ID. Should be able to use "source create_pokedex.sql" or copy and paste it into mysql prompt
+# gym-control.php
+Configure the database variables to match what is needed to access your RealDeviceMap Database. Insert a geofence with the followin schema: (LAT LONG, LAT LONG, LAT LONG) in the appropriate section of the query.
 
-# TO-DO
-```
-Add Gym Owner/Team
-Add Raid Boss Moveset
-Add gps link to team name 
-```
+You can alter the column names by changing what is between the <th></th> tags
+
+# db_tables.sql
+
+Copy and paste these queries into your SQL DB to create the appropriate database files for Guarding Pokemon and Team Name.
+
+# create_pokedex.sql - This is deprecated. Do not use.

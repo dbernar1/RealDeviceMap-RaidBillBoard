@@ -27,7 +27,9 @@ SELECT
     " . getFormattedTimeFromTimestamp( 'raid_end_timestamp', $dbtimezone, $displaytimezone ) . ",
     raid_level,
     pokedex.name,
-    gym.name
+    gym.name,
+    lat,
+    lon
 FROM gym
     INNER JOIN pokedex
         ON gym.raid_pokemon_id = pokedex.pokemon_id
@@ -51,7 +53,7 @@ ORDER BY raid_end_timestamp
                     echo "<td>" . $row[1] . "</td>";
                     echo "<td>" . $row['raid_level'] . "</td>";
                     echo "<td>" . $row[3] . "</td>";
-                    echo "<td>" . $row['name'] . "</td>";
+                    echo "<td>" . '<a href="https://www.google.ca/maps/search/' . $row['lat'] . ',' . $row['lon'] . '">' . $row['name'] . "</a></td>";
                 echo "</tr>";
             }
             echo "</table>";

@@ -1,10 +1,5 @@
 <?php
-$dbhost = "hostname/ip";
-$dbuser = "rdmuser";
-$dbpass = "password";
-$dbname = "rdmdb";
-$dbtimezone = "UTC";
-$displaytimezone = "UTC";
+require( 'config.php' );
 
 function getFormattedTimeFromTimestamp( $columnName, $dbtimezone, $displaytimezone ) {
 	return "time_format(convert_tz(from_unixtime($columnName), '$dbtimezone', '$displaytimezone'), '%h:%i:%s %p')";

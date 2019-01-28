@@ -1,9 +1,6 @@
 <?php
-$dbhost = "localhost";
-$dbuser = "dbuser";
-$dbpass = "dbpass!";
-$dbname = "dbname";
-// Establish connection to database
+require( 'config.php' );
+
 try{
     $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
     // Set the PDO error mode to exception

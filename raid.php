@@ -1,5 +1,20 @@
 <?php
 require( 'config.php' );
+require( 'pointLocation.php' );
+
+$zones = require( 'zones.php' );
+$pl = new pointLocation();
+function findZoneName( $latitude, $longitude ) {
+	global $zones, $pl;
+
+	foreach( $zones as $name => $polygon ) {
+		if ( 'outside' !== $pl->pointInPolygon( "$latitude $longitude", $polygon ) ) {
+			return $name;
+		}
+	}
+
+	return 'Unknown';
+}
 
 function getFormattedTimeFromTimestamp( $columnName, $dbtimezone, $displaytimezone ) {
     return "time_format(convert_tz(from_unixtime($columnName), '$dbtimezone', '$displaytimezone'), '%h:%i:%s %p')";
@@ -46,6 +61,7 @@ ORDER BY raid_end_timestamp
         echo "<th>Gym</th>";
         echo "<th>Gym Image</th>";
         echo "<th>Gym Control</th>";
+        echo "<th>Zone</th>";
         echo "</tr>";
         while($row = $result->fetch()){
             echo "<tr>";
@@ -56,6 +72,7 @@ ORDER BY raid_end_timestamp
             echo "<td>" . '<a href="https://www.google.ca/maps/search/' . $row['lat'] . ',' . $row['lon'] . '">' . $row['name'] . "</a></td>";
             echo '<td><img src="' . $row['url'] . '" height="150" /></td>';
             echo "<td>" . $row[4] . "</td>";
+            echo "<td>" . findZoneName($row['lat'], $row['lon']) . "</td>";
             echo "</tr>";
         }
         echo "</table>";

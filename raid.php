@@ -29,7 +29,8 @@ SELECT
     pokedex.name,
     gym.name,
     lat,
-    lon
+    lon,
+    url
 FROM gym
     INNER JOIN pokedex
         ON gym.raid_pokemon_id = pokedex.pokemon_id
@@ -46,6 +47,7 @@ ORDER BY raid_end_timestamp
                     echo "<th>Raid Level</th>";
                     echo "<th>Raid Boss</th>";
                     echo "<th>Gym</th>";
+                    echo "<th>Gym Image</th>";
                 echo "</tr>";
             while($row = $result->fetch()){
                 echo "<tr>";
@@ -54,6 +56,7 @@ ORDER BY raid_end_timestamp
                     echo "<td>" . $row['raid_level'] . "</td>";
                     echo "<td>" . $row[3] . "</td>";
                     echo "<td>" . '<a href="https://www.google.ca/maps/search/' . $row['lat'] . ',' . $row['lon'] . '">' . $row['name'] . "</a></td>";
+                    echo '<td><img src="' . $row['url'] . '" height="150" /></td>';
                 echo "</tr>";
             }
             echo "</table>";

@@ -3,6 +3,12 @@ $dbhost = "hostname/ip";
 $dbuser = "rdmuser";
 $dbpass = "password";
 $dbname = "rdmdb";
+$dbtimezone = "UTC";
+$displaytimezone = "UTC";
+
+function getFormattedTimeFromTimestamp( $columnName, $dbtimezone, $displaytimezone ) {
+	return "time_format(convert_tz(from_unixtime($columnName), '$dbtimezone', '$displaytimezone'), '%h:%i:%s %p')";
+}
 
 // Establish connection to database
 try{
@@ -17,8 +23,8 @@ try
 {
     $sql = "
 SELECT
-    time_format(from_unixtime(raid_battle_timestamp), '%h:%i:%s %p'),
-    time_format(from_unixtime(raid_end_timestamp),'%h:%i:%s %p'),
+    " . getFormattedTimeFromTimestamp( 'raid_battle_timestamp', $dbtimezone, $displaytimezone ) . ",
+    " . getFormattedTimeFromTimestamp( 'raid_end_timestamp', $dbtimezone, $displaytimezone ) . ",
     raid_level,
     pokedex.name,
     gym.name

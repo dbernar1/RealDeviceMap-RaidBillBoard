@@ -1,6 +1,22 @@
 <?php
 require( 'config.php' );
 
+require( 'pointLocation.php' );
+
+$zones = require( 'zones.php' );
+$pl = new pointLocation();
+function findZoneName( $latitude, $longitude ) {
+global $zones, $pl;
+
+foreach( $zones as $name => $polygon ) {
+    if ( 'outside' !== $pl->pointInPolygon( "$latitude $longitude", $polygon ) ) {
+	return $name;
+    }
+}
+
+return 'Unknown';
+}
+
 // Establish connection to database
 try{
     $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
@@ -13,11 +29,13 @@ try{
 try 
 {
     $sql = "SELECT
-    	time_format(from_unixtime(updated), '%h:%i:%s %p'),
+    	time_format(convert_tz(from_unixtime(updated), '$dbtimezone', '$displaytimezone'), '%h:%i:%s %p'),
 	teamdirectory.name,
 	availble_slots,
 	pokedex.name,
-	gym.name
+	gym.name,
+	lat,
+	lon
 from
 	gym
 	join teamdirectory
@@ -37,6 +55,7 @@ order by teamdirectory.name ASC";
                     echo "<th>Available Slots</th>";
                     echo "<th>Guarding Pokemon</th>";
                     echo "<th>Gym Name</th>";
+                    echo "<th>Gym Zone</th>";
                 echo "</tr>";
             while($row = $result->fetch()){
                 echo "<tr>";
@@ -45,6 +64,7 @@ order by teamdirectory.name ASC";
                     echo "<td>" . $row['availble_slots'] . "</td>";
                     echo "<td>" . $row[3] . "</td>";
                     echo "<td>" . $row['name'] . "</td>";
+                    echo "<td>" . findZoneName( $row['lat'], $row['lon'] ) . "</td>";
                 echo "</tr>";
             }
             echo "</table>";

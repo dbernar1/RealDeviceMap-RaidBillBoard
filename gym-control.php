@@ -63,7 +63,8 @@ from
 	join pokedex
 		on gym.guarding_pokemon_id = pokedex.pokemon_id
 where
-	gym.name is not null
+	ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON((LAT LONG, LAT LONG, LAT LONG))'), point(gym.lat, gym.lon))
+	&& gym.name is not null
 order by teamdirectory.name ASC";   
         $result = $pdo->query($sql);
         if($result->rowCount() > 0){

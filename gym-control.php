@@ -12,7 +12,22 @@ try{
 // Query Database and Build Gym Billboard
 try 
 {
-    $sql = "SELECT time_format(from_unixtime(updated), '%h:%i:%s %p'), teamdirectory.name, availble_slots, pokedex.name, gym.name from gym join teamdirectory on gym.team_id = teamdirectory.team_id join pokedex on gym.guarding_pokemon_id = pokedex.pokemon_id where ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON((LAT LONG, LAT LONG, LAT LONG))'), point(gym.lat, gym.lon)) && gym.name is not null order by teamdirectory.name ASC";   
+    $sql = "SELECT
+    	time_format(from_unixtime(updated), '%h:%i:%s %p'),
+	teamdirectory.name,
+	availble_slots,
+	pokedex.name,
+	gym.name
+from
+	gym
+	join teamdirectory
+		on gym.team_id = teamdirectory.team_id
+	join pokedex
+		on gym.guarding_pokemon_id = pokedex.pokemon_id
+where
+	ST_CONTAINS(ST_GEOMFROMTEXT('POLYGON((LAT LONG, LAT LONG, LAT LONG))'), point(gym.lat, gym.lon))
+	&& gym.name is not null
+order by teamdirectory.name ASC";   
         $result = $pdo->query($sql);
         if($result->rowCount() > 0){
             echo "<table border='1';>";

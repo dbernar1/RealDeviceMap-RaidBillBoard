@@ -76,7 +76,7 @@ function getCurrentRaids( $selectedZoneName=null ) {
 					'starts' => $row[ 'raid_battle_timestamp' ],
 					'ends' => $row[ 'raid_end_timestamp' ],
 					'level' => $row[ 'raid_level' ],
-					'pokemon' => $row[ 'pokemon' ],
+					'pokemon' => 'N/A' === $row[ 'pokemon' ] ? 'Egg' : $row[ 'pokemon' ],
 					'lat' => $row[ 'lat' ],
 					'lon' => $row[ 'lon' ],
 					'gym' => $row[ 'name' ],

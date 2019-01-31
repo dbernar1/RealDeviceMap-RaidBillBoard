@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Raids</title>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css" integrity="sha384-PmY9l28YgO4JwMKbTvgaS7XNZJ30MK9FAZjjzXtlqyZCqBY6X6bXIkM++IkyinN+" crossorigin="anonymous">
+	</head>
+	<body>
+		<div class="container">
+			<div id="raids">Loading...</div>
+		</div>
+		<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+		<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+		<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+		<script src="https://unpkg.com/moment@2.24.0/moment.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/recompose/0.26.0/Recompose.min.js"></script>
+		<script src="https://unpkg.com/underscore@1.9.1/underscore-min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
+		<script type="text/babel">
+			const { compose, setDisplayName, withStateHandlers, withProps, } = Recompose;
+			const { pluck, uniq, } = _;
+			
+			const currentlySelected = Qs.parse( location.search.slice( 1 ) );
+
+			const adjustSelection = changes => history.pushState(
+				null,
+				null,
+				'?' + Qs.stringify( Object.assign( {}, currentlySelected, changes ) )
+			);
+
+			const Raids = compose(
+				setDisplayName( 'Raids' ),
+				withStateHandlers(
+					{
+						selectedZone: currentlySelected.zone,
+						selectedLevel: currentlySelected.level,
+					},
+					{
+						setSelectedZone: () => e => {
+							adjustSelection( { zone: e.target.value, } );
+
+							return { selectedZone: e.target.value, };
+						},
+						setSelectedLevel: () => e => {
+							adjustSelection( { level: e.target.value, } );
+
+							return { selectedLevel: e.target.value, };
+						},
+					}
+				),
+				withProps( ( { raids, selectedZone, } ) => ( {
+					raidsInSelectedZone: raids
+					.filter( raid => ! selectedZone || raid.zone === selectedZone ),
+				} ) )
+			)( ( {
+				raids, raidsInSelectedZone,
+				selectedZone, setSelectedZone,
+				selectedLevel, setSelectedLevel,
+			} ) => <div>
+				<h1>
+					<select onChange={ setSelectedLevel } value={ selectedLevel }>
+						<option value="">Any Level</option>
+						{ uniq( pluck( raidsInSelectedZone, 'level' ) ).sort().reverse().map( level => <option value={ level }>Level { level }</option> ) }
+					</select>
+					&nbsp;Raids in&nbsp;
+					<select onChange={ setSelectedZone } value={ selectedZone }>
+						<option value="">All of Winnipeg</option>
+						{ uniq( pluck( raids, 'zone' ) ).sort()
+						.map( zone => <option>{ zone }</option> ) }
+					</select>
+				</h1>
+
+				<div className="table-responsive">
+					<table className="table table-striped">
+						<thead>
+							<tr>
+								<th>Time</th>
+								{ ! selectedLevel && <th>Level</th> }
+								<th>Boss</th>
+								<th>Gym</th>
+								<th>Gym Image</th>
+								<th>Gym Control</th>
+								{ ! selectedZone && <th>Zone</th> }
+							</tr>
+						</thead>
+
+						<tbody>
+							{ raidsInSelectedZone
+							.filter( raid => ! selectedLevel || raid.level === selectedLevel )
+							.map( raid => <tr>
+								<td>{ moment.unix( raid.starts ).format( 'h:mm' ) } - { moment.unix( raid.ends ).format( 'h:mm' ) }</td>
+								{ ! selectedLevel && <td>{ raid.level }</td> }
+								<td>{ raid.pokemon }</td>
+								<td><a href={ `https://www.google.ca/maps/search/${ raid.lat },${ raid.lon }` }>{ raid.gym } </a></td>
+								<td><img src={ raid.url } height="150" /></td>
+								<td>{ raid.control }</td>
+								{ ! selectedZone && <td>{ raid.zone }</td> }
+							</tr> ) }
+						</tbody>
+					</table>
+				</div>
+			</div> );
+
+			fetch( 'http://50.72.124.239/api.php' )
+			.then( response => response.json() )
+			.then( raids => ReactDOM.render(
+				<Raids raids={ raids } />,
+				document.querySelector( '#raids' )
+			) );
+		</script>
+	</body>
+</html>
